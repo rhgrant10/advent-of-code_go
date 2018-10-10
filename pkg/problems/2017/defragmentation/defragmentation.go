@@ -65,13 +65,6 @@ func (s *CoordStack) IsEmpty() bool {
 	return s.size == 0
 }
 
-func getKnotHash(text string) []byte {
-	var lengths = append([]byte(text), hash.SUFFIX...)
-	var sparseHash = hash.BuildSparseHash(lengths, NUM_ROUNDS)
-	var denseHash = hash.ReduceHash(sparseHash)
-	return denseHash
-}
-
 func getDiskState(keyString string) map[Coord]bool {
 	var grid = make(map[Coord]bool, 0)
 	for y := 0; y < NUM_KEYS; y++ {
@@ -83,6 +76,13 @@ func getDiskState(keyString string) map[Coord]bool {
 		}
 	}
 	return grid
+}
+
+func getKnotHash(text string) []byte {
+	var lengths = append([]byte(text), hash.SUFFIX...)
+	var sparseHash = hash.BuildSparseHash(lengths, NUM_ROUNDS)
+	var denseHash = hash.ReduceHash(sparseHash)
+	return denseHash
 }
 
 func getBits(knotHash []byte) (bits string) {
@@ -146,12 +146,12 @@ func isInbounds(coord Coord) bool {
 		0 <= coord[1] && coord[1] < 128
 }
 
-func Part1(args []string) interface{} {
-	var grid = getDiskState(args[0]) // args[0] isn't a filename :(
+func Part1(input string) interface{} {
+	var grid = getDiskState(input)
 	return countUsed(grid)
 }
 
-func Part2(args []string) interface{} {
-	var grid = getDiskState(args[0]) // args[0] isn't a filename :(
+func Part2(input string) interface{} {
+	var grid = getDiskState(input)
 	return countIslands(grid)
 }

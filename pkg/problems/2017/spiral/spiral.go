@@ -2,7 +2,6 @@ package spiral
 
 import (
 	"fmt"
-	"io/ioutil"
 	"math"
 	"math/big"
 	"strconv"
@@ -11,6 +10,21 @@ import (
 var ZERO = big.NewInt(0)
 var ONE = big.NewInt(1)
 var TWO = big.NewInt(2)
+
+var LEFT = [2]int{-1, 0}
+var RIGHT = [2]int{1, 0}
+var UP = [2]int{0, 1}
+var DOWN = [2]int{0, -1}
+
+var UP_LEFT = [2]int{-1, 1}
+var UP_RIGHT = [2]int{1, 1}
+var DOWN_LEFT = [2]int{-1, -1}
+var DOWN_RIGHT = [2]int{1, -1}
+
+var CARDINALS = [4][2]int{RIGHT, UP, LEFT, DOWN}
+var DIAGNOALS = [4][2]int{UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT}
+
+var ADJACENTS = [8][2]int{RIGHT, UP, LEFT, DOWN, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT}
 
 func calculateSpiralManhattan(square uint64) uint64 {
 	if square == 1 {
@@ -21,15 +35,15 @@ func calculateSpiralManhattan(square uint64) uint64 {
 	squareFloor := uint64(math.Sqrt(float64(square - 1)))
 	ringMaxRoot := squareFloor + (squareFloor % 2) + 1
 	ringMax := uint64(math.Pow(float64(ringMaxRoot), 2))
-	ringId := (ringMaxRoot+1)/2 - 1
+	ringID := (ringMaxRoot+1)/2 - 1
 
 	// Find the perpendicular axis.
 	ringSize := ringMax - uint64(math.Pow(math.Sqrt(float64(ringMax))-2, 2))
 	edgeIndex := ringSize - (ringMax - square)
-	perpendicular := uint64(math.Abs(float64(edgeIndex%(ringId*2) - ringId)))
+	perpendicular := uint64(math.Abs(float64(edgeIndex%(ringID*2) - ringID)))
 
 	// Manhattan distance is sum of axis movements
-	distance := ringId + perpendicular
+	distance := ringID + perpendicular
 	return distance
 }
 
@@ -55,10 +69,10 @@ func calculateBigSpiralManhattan(square *big.Int) *big.Int {
 	// ringMax := int(math.Pow(float64(ringMaxRoot), 2))
 	ringMax := new(big.Int).Exp(ringMaxRoot, TWO, nil)
 
-	// ringId := (ringMaxRoot + 1) / 2 - 1
+	// ringID := (ringMaxRoot + 1) / 2 - 1
 	t.Add(ringMaxRoot, ONE)
 	t.Div(t, TWO)
-	ringId := new(big.Int).Sub(t, ONE)
+	ringID := new(big.Int).Sub(t, ONE)
 
 	// ringSize := ringMax - int(math.Pow(math.Sqrt(float64(ringMax)) - 2, 2))
 	t.Sqrt(ringMax)
@@ -70,45 +84,25 @@ func calculateBigSpiralManhattan(square *big.Int) *big.Int {
 	t.Sub(ringMax, square)
 	edgeIndex := new(big.Int).Sub(ringSize, t)
 
-	// perpendicular := int(math.Abs(float64(edgeIndex % (ringId * 2) - ringId)))
-	t.Mul(ringId, TWO)
+	// perpendicular := int(math.Abs(float64(edgeIndex % (ringID * 2) - ringID)))
+	t.Mul(ringID, TWO)
 	t.Mod(edgeIndex, t)
-	t.Sub(t, ringId)
+	t.Sub(t, ringID)
 	perpendicular := new(big.Int).Abs(t)
 
-	// distance := ringId + perpendicular
-	distance := t.Add(ringId, perpendicular)
+	// distance := ringID + perpendicular
+	distance := t.Add(ringID, perpendicular)
 	return distance
 }
 
-func readBigSquare(filename string) *big.Int {
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		panic(err)
-	}
-
+func readBigSquare(input string) *big.Int {
 	var square = new(big.Int)
-	_, ok := square.SetString(string(data), 10)
+	_, ok := square.SetString(input, 10)
 	if !ok {
 		panic(fmt.Errorf("could not parse integer"))
 	}
 	return square
 }
-
-var LEFT = [2]int{-1, 0}
-var RIGHT = [2]int{1, 0}
-var UP = [2]int{0, 1}
-var DOWN = [2]int{0, -1}
-
-var UP_LEFT = [2]int{-1, 1}
-var UP_RIGHT = [2]int{1, 1}
-var DOWN_LEFT = [2]int{-1, -1}
-var DOWN_RIGHT = [2]int{1, -1}
-
-var CARDINALS = [4][2]int{RIGHT, UP, LEFT, DOWN}
-var DIAGNOALS = [4][2]int{UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT}
-
-var ADJACENTS = [8][2]int{RIGHT, UP, LEFT, DOWN, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT}
 
 func move(point [2]int, offset [2]int) [2]int {
 	return [2]int{point[0] + offset[0], point[1] + offset[1]}
@@ -148,8 +142,9 @@ func getFirstSquareGreaterThan(target int) int {
 	}
 }
 
-func Part1(args []string) interface{} {
-	var square = readBigSquare(args[0])
+// Part1 function
+func Part1(input string) interface{} {
+	var square = readBigSquare(input)
 	if square.IsUint64() {
 		return calculateSpiralManhattan(square.Uint64())
 	} else {
@@ -157,8 +152,9 @@ func Part1(args []string) interface{} {
 	}
 }
 
-func Part2(args []string) interface{} {
-	target, err := strconv.Atoi(args[0])
+// Part2 function
+func Part2(input string) interface{} {
+	target, err := strconv.Atoi(input)
 	if err != nil {
 		panic(err)
 	}

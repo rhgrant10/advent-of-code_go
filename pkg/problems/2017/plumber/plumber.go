@@ -1,12 +1,9 @@
 package plumber
 
-import "bufio"
-
-import "io"
-import "os"
 import "strings"
 import "strconv"
 
+// Graph type
 type Graph map[int][]int
 
 type node struct {
@@ -14,6 +11,7 @@ type node struct {
 	Next  *node
 }
 
+// Stack type
 type Stack struct {
 	Top *node
 }
@@ -33,25 +31,10 @@ func (s *Stack) IsEmpty() bool {
 	return s.Top == nil
 }
 
-func readGraph(filename string) Graph {
-	fp, err := os.Open(filename)
-	if err != nil {
-		panic(err)
-	}
-
+func readGraph(input string) Graph {
 	var graph = make(Graph)
-	var reader = bufio.NewReader(fp)
-	for {
-		line, err := reader.ReadString('\n')
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			panic(err)
-		}
-
+	for _, line := range strings.Split(input, "\n") {
 		var fields = strings.Fields(line)
-
 		var children []int
 		for _, field := range fields[2:] {
 			var childName = strings.Trim(field, ",")
@@ -129,14 +112,16 @@ func countProgramGroups(graph Graph) (numGroups int) {
 	return
 }
 
-func Part1(args []string) interface{} {
-	var graph = readGraph(args[0])
+// Part1 function
+func Part1(input string) interface{} {
+	var graph = readGraph(input)
 	var programs = getProgramsInGroup(graph, 0)
 	return len(programs)
 }
 
-func Part2(args []string) interface{} {
-	var graph = readGraph(args[0])
+// Part2 function
+func Part2(input string) interface{} {
+	var graph = readGraph(input)
 	var numGroups = countProgramGroups(graph)
 	return numGroups
 }

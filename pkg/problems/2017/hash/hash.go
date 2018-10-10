@@ -1,9 +1,7 @@
 package hash
 
 import (
-	"bytes"
 	"fmt"
-	"io/ioutil"
 	"strconv"
 	"strings"
 )
@@ -30,14 +28,8 @@ func (s *Stack) Pop() byte {
 	return node.Value
 }
 
-func readLengths(filename string) (lengths []byte) {
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		panic(err)
-	}
-
-	content := strings.Trim(string(data), "\n")
-	for _, value := range strings.Split(content, ",") {
+func readLengths(input string) (lengths []byte) {
+	for _, value := range strings.Split(input, ",") {
 		length, err := strconv.Atoi(value)
 		if err != nil {
 			panic(err)
@@ -47,12 +39,8 @@ func readLengths(filename string) (lengths []byte) {
 	return
 }
 
-func readBytes(filename string) []byte {
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		panic(err)
-	}
-	return append(bytes.TrimSpace(data), SUFFIX...)
+func readBytes(input string) []byte {
+	return append([]byte(input), SUFFIX...)
 }
 
 // BuildSparseHash creates a sparse hash using a given number of hash rounds.
@@ -105,16 +93,14 @@ func toHexString(hash []byte) (hexString string) {
 	return
 }
 
-func Part1(args []string) interface{} {
-	var filename = args[0]
-	var lengths = readLengths(filename)
+func Part1(input string) interface{} {
+	var lengths = readLengths(input)
 	var sparseHash = BuildSparseHash(lengths, 1)
 	return int(sparseHash[0]) * int(sparseHash[1])
 }
 
-func Part2(args []string) interface{} {
-	var filename = args[0]
-	var data = readBytes(filename)
+func Part2(input string) interface{} {
+	var data = readBytes(input)
 	var sparseHash = BuildSparseHash(data, 64)
 	var denseHash = ReduceHash(sparseHash)
 	return toHexString(denseHash)

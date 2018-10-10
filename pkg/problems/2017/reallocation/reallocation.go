@@ -5,7 +5,7 @@ import "io/ioutil"
 import "strings"
 import "strconv"
 
-func readBanks(data string) (banks []int) {
+func banksFromString(data string) (banks []int) {
 	fields := strings.Fields(string(data))
 	for _, field := range fields {
 		bank, err := strconv.Atoi(field)
@@ -17,7 +17,7 @@ func readBanks(data string) (banks []int) {
 	return
 }
 
-func writeData(banks []int) string {
+func banksToString(banks []int) string {
 	var elements []string
 	for _, bank := range banks {
 		elements = append(elements, strconv.Itoa(bank))
@@ -26,7 +26,7 @@ func writeData(banks []int) string {
 }
 
 func redistribute(data string) string {
-	banks := readBanks(data)
+	banks := banksFromString(data)
 
 	// find the largest bank and it's index
 	var index, maxBlocks int
@@ -41,11 +41,11 @@ func redistribute(data string) string {
 	banks[index] = 0
 	for maxBlocks > 0 {
 		index = (index + 1) % len(banks)
-		banks[index] += 1
-		maxBlocks -= 1
+		banks[index]++
+		maxBlocks--
 	}
 
-	return writeData(banks)
+	return banksToString(banks)
 }
 
 func countReallocationCycles(banks string) (count int) {
@@ -56,7 +56,7 @@ func countReallocationCycles(banks string) (count int) {
 		seen[banks] = true
 		banks = redistribute(banks)
 		_, hasKey = seen[banks]
-		count += 1
+		count++
 	}
 	return
 }
@@ -76,7 +76,7 @@ func countReallocationLoopSize(banks string) (count int) {
 	banks = redistribute(banks)
 	for banks != target {
 		banks = redistribute(banks)
-		count += 1
+		count++
 	}
 
 	return
@@ -87,15 +87,15 @@ func parseInputFile(filename string) string {
 	if err != nil {
 		panic(err)
 	}
-	return writeData(readBanks(string(data)))
+	return banksToString(banksFromString(string(data)))
 }
 
-func Part1(args []string) interface{} {
-	var banks = parseInputFile(args[0])
-	return countReallocationCycles(banks)
+// Part1 function
+func Part1(input string) interface{} {
+	return countReallocationCycles(input)
 }
 
-func Part2(args []string) interface{} {
-	var banks = parseInputFile(args[0])
-	return countReallocationLoopSize(banks)
+// Part2 function
+func Part2(input string) interface{} {
+	return countReallocationLoopSize(input)
 }

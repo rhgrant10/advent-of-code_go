@@ -1,7 +1,6 @@
 package captcha
 
 import (
-	"io/ioutil"
 	"strconv"
 	"strings"
 )
@@ -18,12 +17,8 @@ func perform(captcha []int, getAhead func([]int) int) (sum int) {
 	return
 }
 
-func parseCaptcha(filename string) (captcha []int) {
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		panic(err)
-	}
-	var sequence = strings.TrimSpace(string(data))
+func parseCaptcha(input string) (captcha []int) {
+	var sequence = strings.TrimSpace(input)
 	for _, char := range sequence {
 		var digit, err = strconv.Atoi(string(char))
 		if err != nil {
@@ -43,13 +38,13 @@ func halfwayAhead(input []int) int {
 }
 
 // Part1 is here
-func Part1(args []string) interface{} {
-	var captcha = parseCaptcha(args[0])
+func Part1(input string) interface{} {
+	var captcha = parseCaptcha(input)
 	return perform(captcha, oneAhead)
 }
 
 // Part2 is here
-func Part2(args []string) interface{} {
-	var captcha = parseCaptcha(args[0])
+func Part2(input string) interface{} {
+	var captcha = parseCaptcha(input)
 	return perform(captcha, halfwayAhead)
 }

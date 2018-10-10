@@ -1,30 +1,12 @@
 package checksum
 
 import (
-	"bufio"
-	"io"
-	"os"
 	"strconv"
 	"strings"
 )
 
-func readSpreadsheet(filename string) (spreadsheet [][]int) {
-	fp, err := os.Open(filename)
-	if err != nil {
-		panic(err)
-	}
-	defer fp.Close()
-
-	var reader = bufio.NewReader(fp)
-	for {
-		line, err := reader.ReadString('\n')
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			panic(err)
-		}
-
+func readSpreadsheet(input string) (spreadsheet [][]int) {
+	for _, line := range strings.Split(input, "\n") {
 		var row []int
 		for _, field := range strings.Fields(line) {
 			n, err := strconv.Atoi(field)
@@ -76,13 +58,13 @@ func getMultipleOfEvenlyDivisible(row []int) int {
 }
 
 // Part1 is here
-func Part1(args []string) interface{} {
-	var spreadsheet = readSpreadsheet(args[0])
+func Part1(input string) interface{} {
+	var spreadsheet = readSpreadsheet(input)
 	return calculateChecksum(spreadsheet, getMaxDifference)
 }
 
 // Part2 is here
-func Part2(args []string) interface{} {
-	var spreadsheet = readSpreadsheet(args[0])
+func Part2(input string) interface{} {
+	var spreadsheet = readSpreadsheet(input)
 	return calculateChecksum(spreadsheet, getMultipleOfEvenlyDivisible)
 }

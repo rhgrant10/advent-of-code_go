@@ -1,11 +1,11 @@
 package passphrase
 
 import (
-	"io/ioutil"
 	"sort"
 	"strings"
 )
 
+// Runes type
 type Runes []rune
 
 func (r Runes) Len() int           { return len(r) }
@@ -46,30 +46,27 @@ func containsDuplicateWords(passphrase string) bool {
 	return false
 }
 
-func readPassphrases(filename string) []string {
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		panic(err)
-	}
-	var contents = strings.Trim(string(data), "\n")
-	return strings.Split(contents, "\n")
+func readPassphrases(input string) []string {
+	return strings.Split(input, "\n")
 }
 
 func getValidPassphraseCount(passphrases []string, isInvalid func(string) bool) (numValid int) {
 	for _, passphrase := range passphrases {
 		if !isInvalid(passphrase) {
-			numValid += 1
+			numValid++
 		}
 	}
 	return
 }
 
-func Part1(args []string) interface{} {
-	var passphrases = readPassphrases(args[0])
+// Part1 function
+func Part1(input string) interface{} {
+	var passphrases = readPassphrases(input)
 	return getValidPassphraseCount(passphrases, containsDuplicateWords)
 }
 
-func Part2(args []string) interface{} {
-	var passphrases = readPassphrases(args[0])
+// Part2 function
+func Part2(input string) interface{} {
+	var passphrases = readPassphrases(input)
 	return getValidPassphraseCount(passphrases, containsAnagrams)
 }

@@ -1,10 +1,7 @@
 package circus
 
 import (
-	"bufio"
 	"fmt"
-	"io"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -76,27 +73,12 @@ func (s *LevelStack) Size() int {
 	return len(s.data)
 }
 
-func parseTree(filename string) (map[string]string, map[string][]string, map[string]int) {
-	fp, err := os.Open(filename)
-	if err != nil {
-		panic(err)
-	}
-	defer fp.Close()
-
+func parseTree(input string) (map[string]string, map[string][]string, map[string]int) {
 	parents := make(map[string]string)
 	weights := make(map[string]int)
 	children := make(map[string][]string)
 
-	reader := bufio.NewReader(fp)
-	for {
-		line, err := reader.ReadString('\n')
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			panic(err)
-		}
-
+	for _, line := range strings.Split(input, "\n") {
 		node, weight, childNodes := parseLine(line)
 		weights[node] = weight
 		for _, childNode := range childNodes {
@@ -228,9 +210,8 @@ func findRoot(parents map[string]string, weights map[string]int) (string, error)
 }
 
 // Part1 is here
-func Part1(args []string) interface{} {
-	filename := os.Args[1]
-	parents, _, nodes := parseTree(filename)
+func Part1(input string) interface{} {
+	parents, _, nodes := parseTree(input)
 	root, err := findRoot(parents, nodes)
 	if err != nil {
 		panic(err)
@@ -239,9 +220,8 @@ func Part1(args []string) interface{} {
 }
 
 // Part2 is here
-func Part2(args []string) interface{} {
-	filename := os.Args[1]
-	parents, children, weights := parseTree(filename)
+func Part2(input string) interface{} {
+	parents, children, weights := parseTree(input)
 	root, err := findRoot(parents, weights)
 	if err != nil {
 		panic(err)

@@ -1,7 +1,5 @@
 package registers
 
-import "io/ioutil"
-import "os"
 import "strconv"
 import "strings"
 
@@ -35,15 +33,8 @@ var COMPARATORS = map[string]Comparator{
 	">=": ge,
 }
 
-func parseInputFile(filename string) []string {
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		panic(err)
-	}
-
-	contents := strings.Trim(string(data), "\n")
-	lines := strings.Split(contents, "\n")
-	return lines
+func parseInput(input string) []string {
+	return strings.Split(input, "\n")
 }
 
 func parseInstruction(line string) (func(RegisterSet), func(RegisterSet) bool) {
@@ -115,16 +106,16 @@ func findMaxValue(registers RegisterSet) (max int) {
 	return
 }
 
-func Part1(args []string) interface{} {
-	var filename = os.Args[1]
-	var instructions = parseInputFile(filename)
+// Part1 function
+func Part1(input string) interface{} {
+	var instructions = parseInput(input)
 	var registers = make(RegisterSet)
 	return execute1(instructions, registers)
 }
 
-func Part2(args []string) interface{} {
-	var filename = os.Args[1]
-	var instructions = parseInputFile(filename)
+// Part2 function
+func Part2(input string) interface{} {
+	var instructions = parseInput(input)
 	var registers = make(RegisterSet)
 	return execute2(instructions, registers)
 }

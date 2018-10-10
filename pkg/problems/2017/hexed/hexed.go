@@ -1,13 +1,13 @@
 package hexed
 
 import (
-	"io/ioutil"
 	"strings"
 )
 
+// Point type
 type Point [3]int
 
-var DIRECTIONS = map[string]Point{
+var cardinals = map[string]Point{
 	"n":  [3]int{0, 1, -1},
 	"s":  [3]int{0, -1, 1},
 	"ne": [3]int{1, 0, -1},
@@ -16,16 +16,10 @@ var DIRECTIONS = map[string]Point{
 	"se": [3]int{1, -1, 0},
 }
 
-var CENTER = [3]int{0, 0, 0}
+var center = [3]int{0, 0, 0}
 
-func readDirections(filename string) []string {
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		panic(err)
-	}
-
-	var contents = strings.TrimSpace(string(data))
-	return strings.Split(contents, ",")
+func readDirections(input string) []string {
+	return strings.Split(input, ",")
 }
 
 func getLocation(directions []string, start Point) Point {
@@ -36,7 +30,7 @@ func getLocation(directions []string, start Point) Point {
 func follow(directions []string, start Point) []Point {
 	coords := []Point{start}
 	for i, direction := range directions {
-		var coord = move(coords[i], DIRECTIONS[direction])
+		var coord = move(coords[i], cardinals[direction])
 		coords = append(coords, coord)
 	}
 	return coords
@@ -50,7 +44,7 @@ func move(point Point, offset Point) (result Point) {
 }
 
 func getDistance(end Point, start Point) (distance int) {
-	for i := 0; i < 3; i += 1 {
+	for i := 0; i < 3; i++ {
 		var difference = end[i] - start[i]
 		if difference > distance {
 			distance = difference
@@ -59,18 +53,20 @@ func getDistance(end Point, start Point) (distance int) {
 	return
 }
 
-func Part1(args []string) interface{} {
-	var directions = readDirections(args[0])
-	var location = getLocation(directions, CENTER)
-	return getDistance(location, CENTER)
+// Part1 function
+func Part1(input string) interface{} {
+	var directions = readDirections(input)
+	var location = getLocation(directions, center)
+	return getDistance(location, center)
 }
 
-func Part2(args []string) interface{} {
-	var directions = readDirections(args[0])
-	var locations = follow(directions, CENTER)
+// Part2 function
+func Part2(input string) interface{} {
+	var directions = readDirections(input)
+	var locations = follow(directions, center)
 	var maxDistance int
 	for _, location := range locations {
-		var distance = getDistance(location, CENTER)
+		var distance = getDistance(location, center)
 		if distance > maxDistance {
 			maxDistance = distance
 		}

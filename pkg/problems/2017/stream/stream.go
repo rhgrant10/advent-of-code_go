@@ -1,20 +1,6 @@
 package stream
 
-import (
-	"io/ioutil"
-	"strings"
-)
-
-func readInputFile(filename string) string {
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		panic(err)
-	}
-
-	return strings.Trim(string(data), "\n")
-}
-
-func Parse(stream string) (score int, garbage int) {
+func parseStream(stream string) (score int, garbage int) {
 	var depth = 0
 	var inGarbage = false
 	var skip = false
@@ -28,31 +14,29 @@ func Parse(stream string) (score int, garbage int) {
 			if inGarbage {
 				inGarbage = c != '>'
 				if inGarbage {
-					garbage += 1
+					garbage++
 				}
 			} else if c == '<' {
 				inGarbage = true
 			} else if c == '{' {
-				depth += 1
+				depth++
 				score += depth
 			} else if c == '}' {
-				depth -= 1
+				depth--
 			}
 		}
 	}
 	return
 }
 
-func Part1(args []string) interface{} {
-	var filename = args[0]
-	var stream = readInputFile(filename)
-	var score, _ = Parse(stream)
+// Part1 function
+func Part1(input string) interface{} {
+	var score, _ = parseStream(input)
 	return score
 }
 
-func Part2(args []string) interface{} {
-	var filename = args[0]
-	var stream = readInputFile(filename)
-	var _, garbage = Parse(stream)
+// Part2 function
+func Part2(input string) interface{} {
+	var _, garbage = parseStream(input)
 	return garbage
 }

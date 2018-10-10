@@ -1,23 +1,14 @@
 package trampolines
 
 import (
-	"io/ioutil"
 	"strconv"
 	"strings"
 )
 
-func createMaze(filename string) []int {
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		panic(err)
-	}
-
-	instructions := strings.Trim(string(data), "\n")
-	lines := strings.Split(instructions, "\n")
-
+func createMaze(input string) []int {
 	var maze []int
-	for _, line := range lines {
-		offset, err := strconv.Atoi(line)
+	for _, instruction := range strings.Split(input, "\n") {
+		offset, err := strconv.Atoi(instruction)
 		if err != nil {
 			panic(err)
 		}
@@ -31,9 +22,9 @@ func countEscapeSteps(maze []int, getAdjustment func(int) int) (steps int) {
 	var index int
 	for 0 <= index && index < len(maze) {
 		newIndex := index + maze[index]
-		maze[index] += getAdjustment(maze[index])
+		maze[index] = getAdjustment(maze[index])
 		index = newIndex
-		steps += 1
+		steps++
 	}
 	return
 }
@@ -50,12 +41,14 @@ func conditionalIncrementer(value int) int {
 	}
 }
 
-func Part1(args []string) interface{} {
-	maze := createMaze(args[0])
+// Part1 function
+func Part1(input string) interface{} {
+	maze := createMaze(input)
 	return countEscapeSteps(maze, simpleIncrementer)
 }
 
-func Part2(args []string) interface{} {
-	maze := createMaze(args[0])
+// Part2 function
+func Part2(input string) interface{} {
+	maze := createMaze(input)
 	return countEscapeSteps(maze, conditionalIncrementer)
 }
